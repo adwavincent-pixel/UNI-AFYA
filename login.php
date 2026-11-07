@@ -1,4 +1,49 @@
 <?php
+session_start();
+
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "uni_afya";
+
+$conn = mysqli_connect($host, $user, $password, $database);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Check students table
+    $sql = "SELECT * FROM students WHERE email='$email'";
+    $result = mysqli_query($conn, $sql);
+    $student = mysqli_fetch_assoc($result);
+
+    if ($student && password_verify($password, $student['password'])) {
+        $_SESSION['student_id'] = $student['id'];
+        $_SESSION['student_name'] = $student['fullname'];
+        $_SESSION['user_type'] = 'student';
+        header("Location: dashboard.php");
+        exit();
+    }
+
+    // Check community table
+    $sql2 = "SELECT * FROM community WHERE email='$email'";
+    $result2 = mysqli_query($conn, $sql2);
+    $community = mysqli_fetch_assoc($result2);
+
+    if ($community && password_verify($password, $community['password'])) {
+        $_SESSION['community_id'] = $community['id'];
+        $_SESSION['community_name'] = $community['fullname'];
+        $_SESSION['user_type'] = 'community';
+        header("Location: community_dashboard.php");
+        exit();
+    }
+
+    $error = "Invalid email or password";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,6 +145,14 @@
             background-color: #004d00;
         }
 
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
         .register-link {
             margin-top: 20px;
             font-size: 14px;
@@ -138,6 +191,11 @@
     <div class="login-container">
         <div class="login-box">
             <h2>Login to UNI-AFYA</h2>
+
+            <?php if (isset($error)) { ?>
+                <div class="error"><?php echo $error; ?></div>
+            <?php } ?>
+
             <form action="login.php" method="POST">
                 <div class="form-group">
                     <label>Email Address</label>
