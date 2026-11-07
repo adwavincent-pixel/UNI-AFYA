@@ -1,5 +1,6 @@
 <?php
-// Database connection
+session_start();
+
 $host = "localhost";
 $user = "root";
 $password = "";
@@ -11,28 +12,44 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user_type = $_POST['user_type'];
     $fullname = $_POST['fullname'];
-    $student_id = $_POST['student_id'];
     $email = $_POST['email'];
-    $course = $_POST['course'];
     $phone = $_POST['phone'];
-    $year = $_POST['year'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Check if passwords match
     if ($_POST['password'] != $_POST['confirm_password']) {
         $error = "Passwords do not match";
     } else {
-        // Save to database
-        $sql = "INSERT INTO students (fullname, student_id, email, course, phone, year, password) 
-                VALUES ('$fullname', '$student_id', '$email', '$course', '$phone', '$year', '$password')";
-        
-        if (mysqli_query($conn, $sql)) {
-            $success = "Account created successfully! You can now login.";
+        if ($user_type == "student") {
+            $student_id = $_POST['student_id'];
+            $course = $_POST['course'];
+            $year = $_POST['year'];
+            $gender = $_POST['gender'];
+
+            $sql = "INSERT INTO students (fullname, student_id, email, course, phone, gender, year, password) 
+                    VALUES ('$fullname', '$student_id', '$email', '$course', '$phone', '$gender', '$year', '$password')";
+
+            if (mysqli_query($conn, $sql)) {
+                $success = "Student account created successfully! You can now login.";
+            } else {
+                $error = "Error: " . mysqli_error($conn);
+            }
+
         } else {
-            $error = "Error: " . mysqli_error($conn);
+            $national_id = $_POST['national_id'];
+            $age = $_POST['age'];
+            $location = $_POST['location'];
+
+            $sql = "INSERT INTO community (fullname, national_id, email, phone, age, location, password) 
+                    VALUES ('$fullname', '$national_id', '$email', '$phone', '$age', '$location', '$password')";
+
+            if (mysqli_query($conn, $sql)) {
+                $success = "Community account created successfully! You can now login.";
+            } else {
+                $error = "Error: " . mysqli_error($conn);
+            }
         }
     }
 }
@@ -95,6 +112,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .register-box h2 {
             color: #006400;
             margin-bottom: 30px;
+        }
+
+        .user-type-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .user-type-btn {
+            padding: 10px 30px;
+            border: 2px solid #006400;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: white;
+            color: #006400;
+        }
+
+        .user-type-btn.active {
+            background-color: #006400;
+            color: white;
         }
 
         .form-group {
@@ -173,6 +212,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-align: center;
             padding: 20px;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -200,46 +243,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="error"><?php echo $error; ?></div>
             <?php } ?>
 
+            <!-- User Type Selector -->
+            <div class="user-type-selector">
+                <button type="button" class="user-type-btn active" onclick="showStudent()">Student</button>
+                <button type="button" class="user-type-btn" onclick="showCommunity()">Community Member</button>
+            </div>
+
             <form action="register.php" method="POST">
+                <input type="hidden" name="user_type" id="user_type" value="student">
+
+                <!-- Common Fields -->
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" name="fullname" placeholder="Enter your full name" required>
-                </div>
-                <div class="form-group">
-                    <label>Student ID</label>
-                    <input type="text" name="student_id" placeholder="Enter your student ID" required>
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
                     <input type="email" name="email" placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
-                    <label>Course</label>
-                    <input type="text" name="course" placeholder="Enter your course" required>
-                </div>
-                <div class="form-group">
                     <label>Phone Number</label>
                     <input type="text" name="phone" placeholder="Enter your phone number" required>
                 </div>
-                <div class="form-group">
-                    <label>Gender</label>
-                    <select name="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
+
+                <!-- Student Fields -->
+                <div id="student_fields">
+                    <div class="form-group">
+                        <label>Student ID</label>
+                        <input type="text" name="student_id" placeholder="Enter your student ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Course</label>
+                        <input type="text" name="course" placeholder="Enter your course">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year of Study</label>
+                        <select name="year">
+                            <option value="1">Year 1</option>
+                            <option value="2">Year 2</option>
+                            <option value="3">Year 3</option>
+                            <option value="4">Year 4</option>
+                            <option value="5">Year 5</option>
+                            <option value="6">Year 6</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Year of Study</label>
-                    <select name="year">
-                        <option value="1">Year 1</option>
-                        <option value="2">Year 2</option>
-                        <option value="3">Year 3</option>
-                        <option value="4">Year 4</option>
-                        <option value="5">Year 5</option>
-                        <option value="6">Year 6</option>
-                    </select>
+
+                <!-- Community Fields -->
+                <div id="community_fields" class="hidden">
+                    <div class="form-group">
+                        <label>National ID</label>
+                        <input type="text" name="national_id" placeholder="Enter your National ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" name="age" placeholder="Enter your age">
+                    </div>
+                    <div class="form-group">
+                        <label>Location/Village</label>
+                        <input type="text" name="location" placeholder="Enter your location">
+                    </div>
                 </div>
+
+                <!-- Password Fields -->
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" name="password" placeholder="Create a password" required>
@@ -248,6 +322,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label>Confirm Password</label>
                     <input type="password" name="confirm_password" placeholder="Confirm your password" required>
                 </div>
+
                 <button type="submit" class="btn">Create Account</button>
             </form>
             <div class="login-link">
@@ -260,6 +335,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>
+
+    <script>
+        function showStudent() {
+            document.getElementById('student_fields').classList.remove('hidden');
+            document.getElementById('community_fields').classList.add('hidden');
+            document.getElementById('user_type').value = 'student';
+            document.querySelectorAll('.user-type-btn')[0].classList.add('active');
+            document.querySelectorAll('.user-type-btn')[1].classList.remove('active');
+        }
+
+        function showCommunity() {
+            document.getElementById('student_fields').classList.add('hidden');
+            document.getElementById('community_fields').classList.remove('hidden');
+            document.getElementById('user_type').value = 'community';
+            document.querySelectorAll('.user-type-btn')[1].classList.add('active');
+            document.querySelectorAll('.user-type-btn')[0].classList.remove('active');
+        }
+    </script>
 
 </body>
 </html>
