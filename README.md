@@ -18,4 +18,4 @@ access health services, guidance and counselling online.
 - XAMPP
 
 ##Developer
-I,Vincent Odhiambo Adwa- COMPUTER SCIENTIST BCS
+-I,Vincent Odhiambo Adwa- COMPUTER SCIENTIST BCS
