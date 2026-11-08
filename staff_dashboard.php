@@ -1,9 +1,12 @@
 <?php
 session_start();
 
-// Check if staff is logged in
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (!isset($_SESSION['staff_id'])) {
-    header("Location: staff_login.php");
+    header("Location: login.php");
     exit();
 }
 
@@ -11,11 +14,11 @@ $staff_name = $_SESSION['staff_name'];
 $staff_role = $_SESSION['staff_role'];
 
 $host = "localhost";
-$user = "root";
-$password = "";
+$dbuser = "root";
+$dbpassword = "";
 $database = "uni_afya";
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = mysqli_connect($host, $dbuser, $dbpassword, $database);
 
 // Count pending health reports
 $reports_sql = "SELECT COUNT(*) as total FROM health_reports WHERE status='pending'";
@@ -31,6 +34,16 @@ $students_count = mysqli_fetch_assoc($students_result)['total'];
 $community_sql = "SELECT COUNT(*) as total FROM community";
 $community_result = mysqli_query($conn, $community_sql);
 $community_count = mysqli_fetch_assoc($community_result)['total'];
+
+// Count pending guidance requests
+$guidance_sql = "SELECT COUNT(*) as total FROM guidance WHERE status='pending'";
+$guidance_result = mysqli_query($conn, $guidance_sql);
+$guidance_count = mysqli_fetch_assoc($guidance_result)['total'];
+
+// Count pending counselling requests
+$counselling_sql = "SELECT COUNT(*) as total FROM counselling WHERE status='pending'";
+$counselling_result = mysqli_query($conn, $counselling_sql);
+$counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +119,7 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
             background-color: white;
             padding: 25px;
             border-radius: 10px;
-            width: 200px;
+            width: 180px;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -118,7 +131,7 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
 
         .stat-card p {
             color: #555;
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 5px;
         }
 
@@ -193,7 +206,6 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
 </head>
 <body>
 
-    <!-- Navigation -->
     <div class="navbar">
         <h1>UNI-AFYA</h1>
         <div>
@@ -202,13 +214,11 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
         </div>
     </div>
 
-    <!-- Welcome Banner -->
     <div class="welcome-banner">
         <h2>Welcome, <?php echo $staff_name; ?>!</h2>
         <p>Role: <?php echo $staff_role; ?></p>
     </div>
 
-    <!-- Dashboard -->
     <div class="dashboard-container">
 
         <!-- Stats -->
@@ -216,6 +226,14 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
             <div class="stat-card">
                 <h2><?php echo $reports_count; ?></h2>
                 <p>Pending Health Reports</p>
+            </div>
+            <div class="stat-card">
+                <h2><?php echo $guidance_count; ?></h2>
+                <p>Pending Guidance</p>
+            </div>
+            <div class="stat-card">
+                <h2><?php echo $counselling_count; ?></h2>
+                <p>Pending Counselling</p>
             </div>
             <div class="stat-card">
                 <h2><?php echo $students_count; ?></h2>
@@ -234,8 +252,16 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
             <div class="card">
                 <a href="view_reports.php">
                     <div class="card-icon">🏥</div>
-                    <h3>View Health Reports</h3>
-                    <p>View and respond to student and community health reports.</p>
+                    <h3>Health Reports</h3>
+                    <p>View and respond to health reports.</p>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="view_guidance.php">
+                    <div class="card-icon">🎓</div>
+                    <h3>Guidance Requests</h3>
+                    <p>View and manage student guidance requests.</p>
                 </a>
             </div>
 
@@ -243,7 +269,7 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
                 <a href="view_students.php">
                     <div class="card-icon">👨‍🎓</div>
                     <h3>View Students</h3>
-                    <p>View all registered students in the system.</p>
+                    <p>View all registered students.</p>
                 </a>
             </div>
 
@@ -260,7 +286,7 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
                 <a href="view_counselling.php">
                     <div class="card-icon">💬</div>
                     <h3>Counselling Requests</h3>
-                    <p>View and manage student counselling requests.</p>
+                    <p>View and manage counselling requests.</p>
                 </a>
             </div>
             <?php } ?>
@@ -278,7 +304,6 @@ $community_count = mysqli_fetch_assoc($community_result)['total'];
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>
