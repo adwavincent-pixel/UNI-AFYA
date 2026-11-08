@@ -174,6 +174,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-color: #006400;
         }
 
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle-password:hover {
+            color: #006400;
+        }
+
         .btn {
             background-color: #006400;
             color: white;
@@ -229,7 +254,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 
-    <!-- Navigation -->
     <div class="navbar">
         <h1>UNI-AFYA</h1>
         <div>
@@ -239,12 +263,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- Login Form -->
     <div class="login-container">
         <div class="login-box">
             <h2>Login to UNI-AFYA</h2>
 
-            <!-- Login Type Selector -->
             <div class="login-type-selector">
                 <button type="button" class="type-btn active" onclick="setType('student', this)">Student</button>
                 <button type="button" class="type-btn" onclick="setType('community', this)">Community</button>
@@ -264,19 +286,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label>Email Address</label>
                     <input type="email" name="email" placeholder="Enter your email" required>
                 </div>
+
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <div class="password-wrapper">
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                    </div>
                 </div>
+
                 <button type="submit" class="btn">Login</button>
             </form>
+
             <div class="register-link">
                 <p>Don't have an account? <a href="register.php">Register here</a></p>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>
@@ -298,6 +325,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 b.classList.remove('active');
             });
             btn.classList.add('active');
+        }
+
+        function togglePassword() {
+            var input = document.getElementById('password');
+            var btn = document.querySelector('.toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
         }
     </script>
 

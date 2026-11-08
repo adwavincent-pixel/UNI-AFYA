@@ -2,11 +2,11 @@
 session_start();
 
 $host = "localhost";
-$user = "root";
-$password = "";
+$dbuser = "root";
+$dbpassword = "";
 $database = "uni_afya";
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = mysqli_connect($host, $dbuser, $dbpassword, $database);
 
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
@@ -14,17 +14,17 @@ if (!$conn) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_type = $_POST['user_type'];
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     if ($_POST['password'] != $_POST['confirm_password']) {
         $error = "Passwords do not match";
     } else {
         if ($user_type == "student") {
-            $student_id = $_POST['student_id'];
-            $course = $_POST['course'];
+            $student_id = mysqli_real_escape_string($conn, $_POST['student_id']);
+            $course = mysqli_real_escape_string($conn, $_POST['course']);
             $year = $_POST['year'];
             $gender = $_POST['gender'];
 
@@ -38,9 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
         } else {
-            $national_id = $_POST['national_id'];
+            $national_id = mysqli_real_escape_string($conn, $_POST['national_id']);
             $age = $_POST['age'];
-            $location = $_POST['location'];
+            $location = mysqli_real_escape_string($conn, $_POST['location']);
 
             $sql = "INSERT INTO community (fullname, national_id, email, phone, age, location, password) 
                     VALUES ('$fullname', '$national_id', '$email', '$phone', '$age', '$location', '$password')";
@@ -163,6 +163,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-color: #006400;
         }
 
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle-password:hover {
+            color: #006400;
+        }
+
         .btn {
             background-color: #006400;
             color: white;
@@ -206,21 +231,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-decoration: none;
         }
 
+        .hidden {
+            display: none;
+        }
+
         .footer {
             background-color: #006400;
             color: white;
             text-align: center;
             padding: 20px;
         }
-
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Navigation -->
     <div class="navbar">
         <h1>UNI-AFYA</h1>
         <div>
@@ -230,7 +254,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- Register Form -->
     <div class="register-container">
         <div class="register-box">
             <h2>Create Account</h2>
@@ -243,7 +266,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="error"><?php echo $error; ?></div>
             <?php } ?>
 
-            <!-- User Type Selector -->
             <div class="user-type-selector">
                 <button type="button" class="user-type-btn active" onclick="showStudent()">Student</button>
                 <button type="button" class="user-type-btn" onclick="showCommunity()">Community Member</button>
@@ -252,7 +274,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form action="register.php" method="POST">
                 <input type="hidden" name="user_type" id="user_type" value="student">
 
-                <!-- Common Fields -->
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" name="fullname" placeholder="Enter your full name" required>
@@ -316,11 +337,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Password Fields -->
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" placeholder="Create a password" required>
+                    <div class="password-wrapper">
+                        <input type="password" name="password" id="password" placeholder="Create a password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Confirm Password</label>
-                    <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+                    <div class="password-wrapper">
+                        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirm_password', this)">👁️</button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn">Create Account</button>
@@ -331,7 +358,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>
@@ -351,6 +377,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('user_type').value = 'community';
             document.querySelectorAll('.user-type-btn')[1].classList.add('active');
             document.querySelectorAll('.user-type-btn')[0].classList.remove('active');
+        }
+
+        function togglePassword(fieldId, btn) {
+            var input = document.getElementById(fieldId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
         }
     </script>
 
