@@ -1,7 +1,10 @@
 <?php
 session_start();
 
-// Check if student is logged in
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (!isset($_SESSION['student_id'])) {
     header("Location: login.php");
     exit();
@@ -141,7 +144,6 @@ $student_name = $_SESSION['student_name'];
 </head>
 <body>
 
-    <!-- Navigation -->
     <div class="navbar">
         <h1>UNI-AFYA</h1>
         <div>
@@ -150,13 +152,11 @@ $student_name = $_SESSION['student_name'];
         </div>
     </div>
 
-    <!-- Welcome Banner -->
     <div class="welcome-banner">
         <h2>Welcome, <?php echo $student_name; ?>!</h2>
         <p>What would you like to do today?</p>
     </div>
 
-    <!-- Dashboard Cards -->
     <div class="dashboard-container">
         <h3>Available Services</h3>
         <div class="cards">
@@ -165,7 +165,7 @@ $student_name = $_SESSION['student_name'];
                 <a href="health_report.php">
                     <div class="card-icon">🏥</div>
                     <h3>Report Health Issue</h3>
-                    <p>Report a health problem and book an appointment with the nurse or doctor.</p>
+                    <p>Report a health problem and book an appointment.</p>
                 </a>
             </div>
 
@@ -173,7 +173,7 @@ $student_name = $_SESSION['student_name'];
                 <a href="appointments.php">
                     <div class="card-icon">📅</div>
                     <h3>My Appointments</h3>
-                    <p>View and manage your upcoming hospital appointments.</p>
+                    <p>View and manage your upcoming appointments.</p>
                 </a>
             </div>
 
@@ -181,7 +181,7 @@ $student_name = $_SESSION['student_name'];
                 <a href="guidance.php">
                     <div class="card-icon">🎓</div>
                     <h3>Guidance</h3>
-                    <p>Get academic and career guidance from qualified school counsellors.</p>
+                    <p>Get academic and career guidance.</p>
                 </a>
             </div>
 
@@ -189,7 +189,7 @@ $student_name = $_SESSION['student_name'];
                 <a href="counselling.php">
                     <div class="card-icon">💬</div>
                     <h3>Counselling</h3>
-                    <p>Book a confidential counselling session for personal support.</p>
+                    <p>Book a confidential counselling session.</p>
                 </a>
             </div>
 
@@ -197,7 +197,7 @@ $student_name = $_SESSION['student_name'];
                 <a href="my_history.php">
                     <div class="card-icon">📋</div>
                     <h3>My History</h3>
-                    <p>View your past health reports, appointments and counselling sessions.</p>
+                    <p>View your past health reports and sessions.</p>
                 </a>
             </div>
 
@@ -209,10 +209,17 @@ $student_name = $_SESSION['student_name'];
                 </a>
             </div>
 
+            <div class="card">
+                <a href="reset_password.php">
+                    <div class="card-icon">🔒</div>
+                    <h3>Change Password</h3>
+                    <p>Update your account password.</p>
+                </a>
+            </div>
+
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>

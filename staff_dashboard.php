@@ -20,27 +20,22 @@ $database = "uni_afya";
 
 $conn = mysqli_connect($host, $dbuser, $dbpassword, $database);
 
-// Count pending health reports
 $reports_sql = "SELECT COUNT(*) as total FROM health_reports WHERE status='pending'";
 $reports_result = mysqli_query($conn, $reports_sql);
 $reports_count = mysqli_fetch_assoc($reports_result)['total'];
 
-// Count total students
 $students_sql = "SELECT COUNT(*) as total FROM students";
 $students_result = mysqli_query($conn, $students_sql);
 $students_count = mysqli_fetch_assoc($students_result)['total'];
 
-// Count total community members
 $community_sql = "SELECT COUNT(*) as total FROM community";
 $community_result = mysqli_query($conn, $community_sql);
 $community_count = mysqli_fetch_assoc($community_result)['total'];
 
-// Count pending guidance requests
 $guidance_sql = "SELECT COUNT(*) as total FROM guidance WHERE status='pending'";
 $guidance_result = mysqli_query($conn, $guidance_sql);
 $guidance_count = mysqli_fetch_assoc($guidance_result)['total'];
 
-// Count pending counselling requests
 $counselling_sql = "SELECT COUNT(*) as total FROM counselling WHERE status='pending'";
 $counselling_result = mysqli_query($conn, $counselling_sql);
 $counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
@@ -221,7 +216,6 @@ $counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
 
     <div class="dashboard-container">
 
-        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
                 <h2><?php echo $reports_count; ?></h2>
@@ -245,7 +239,6 @@ $counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
             </div>
         </div>
 
-        <!-- Action Cards -->
         <h3 class="section-title">Quick Actions</h3>
         <div class="cards">
 
@@ -261,7 +254,7 @@ $counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
                 <a href="view_guidance.php">
                     <div class="card-icon">🎓</div>
                     <h3>Guidance Requests</h3>
-                    <p>View and manage student guidance requests.</p>
+                    <p>View and manage guidance requests.</p>
                 </a>
             </div>
 
@@ -300,6 +293,14 @@ $counselling_count = mysqli_fetch_assoc($counselling_result)['total'];
                 </a>
             </div>
             <?php } ?>
+
+            <div class="card">
+                <a href="reset_password.php">
+                    <div class="card-icon">🔒</div>
+                    <h3>Change Password</h3>
+                    <p>Update your account password.</p>
+                </a>
+            </div>
 
         </div>
     </div>

@@ -1,7 +1,10 @@
 <?php
 session_start();
 
-// Check if community member is logged in
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (!isset($_SESSION['community_id'])) {
     header("Location: login.php");
     exit();
@@ -150,7 +153,6 @@ $community_name = $_SESSION['community_name'];
 </head>
 <body>
 
-    <!-- Navigation -->
     <div class="navbar">
         <h1>UNI-AFYA</h1>
         <div>
@@ -159,13 +161,11 @@ $community_name = $_SESSION['community_name'];
         </div>
     </div>
 
-    <!-- Welcome Banner -->
     <div class="welcome-banner">
         <h2>Welcome, <?php echo $community_name; ?>!</h2>
         <p>Community Health Services</p>
     </div>
 
-    <!-- Dashboard Cards -->
     <div class="dashboard-container">
 
         <div class="notice">
@@ -179,15 +179,7 @@ $community_name = $_SESSION['community_name'];
                 <a href="health_report.php">
                     <div class="card-icon">🏥</div>
                     <h3>Report Health Issue</h3>
-                    <p>Report a health problem and book an appointment with the nurse or doctor.</p>
-                </a>
-            </div>
-
-            <div class="card">
-                <a href="appointments.php">
-                    <div class="card-icon">📅</div>
-                    <h3>My Appointments</h3>
-                    <p>View and manage your upcoming hospital appointments.</p>
+                    <p>Report a health problem and book an appointment.</p>
                 </a>
             </div>
 
@@ -207,10 +199,17 @@ $community_name = $_SESSION['community_name'];
                 </a>
             </div>
 
+            <div class="card">
+                <a href="reset_password.php">
+                    <div class="card-icon">🔒</div>
+                    <h3>Change Password</h3>
+                    <p>Update your account password.</p>
+                </a>
+            </div>
+
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2026 UNI-AFYA | Student Health System</p>
     </div>
